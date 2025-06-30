@@ -8,12 +8,16 @@ body{
 display:flex;
 flex-direction:column;
 align-items:start;
+user-select:none;
 background-color:#D8D2DC;
 }
 .container{
 width:240px;
 display:flex;
 flex-wrap:wrap;
+}
+.day:hover{
+ cursor:pointer;
 }
 .day{
 min-width:40px;
@@ -51,6 +55,9 @@ margin-top:8px;
 padding:5px;
 background-color:#AAB7B8;
 overflow:auto;
+}
+.month:hover{
+  cursor:pointer;
 }
 .month[data-type="off"]{
 color:#1E1E1E;
