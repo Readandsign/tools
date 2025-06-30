@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
+display:flex;
+flex-direction:column;
+align-items:start;
 background-color:#D8D2DC;
 }
 .container{
@@ -15,6 +18,9 @@ flex-wrap:wrap;
 .day{
 min-width:40px;
 height:40px;
+display:flex;
+justify-content:center;
+align-items:center;
 border:2px solid #B4B4B4;
 }
 .day[data-type="a"]{
@@ -22,6 +28,36 @@ background-color:#708D81;
 }
 .day[data-type="b"]{
 background-color:#497174;
+}
+.start{
+margin-top:8px;
+}
+.btn{
+color:white;
+background-color:#708D81;
+border-radius:2px;
+}
+.tool{
+display:flex;
+justify-content:start;
+}
+.monthName{
+color:#2F3E46;
+background-color:#BDC3C7;
+}
+.months{
+max-height:100px;
+margin-top:8px;
+padding:5px;
+background-color:#AAB7B8;
+overflow:auto;
+}
+.month[data-type="off"]{
+color:#1E1E1E;
+}
+.month[data-type="on"]{
+color:#2B2B2B;
+background-color:#D6DBDF;
 }
 .code{
 display:none;
@@ -33,23 +69,73 @@ display:none;
 <nav class="container">
 
 </nav>
+<div class="monthName">Месяц</div>
+<div class="tool">
+<div class="months">
+
+</div>
+</div>
 <div class="code"></div>
 
 <script>
 
 let abs;
+let monthName = "Месяц";
+let count = 0;
 
-if(window.localStorage.getItem("daysA01") == null){
+const months = [
+{name : "Январь", max : 31},
+{name : "Февраль", max : 28},
+{name : "Март", max : 31},
+{name : "Апрель", max : 30},
+{name : "Май", max : 31},
+{name : "Июнь", max : 30},
+{name : "Июль", max : 31},
+{name : "Август", max : 31},
+{name : "Сентябрь", max : 30},
+{name : "Октябрь", max : 31},
+{name : "Ноябрь", max : "30"},
+{name : "Декабрь", max : 31}
+];
+
+const contM = document.querySelector(".months");
+const date = document.querySelector(".monthName");
+
+for(let i = 0; i < 12; i++){
+let month = document.createElement("div");
+month.className = "month";
+month.dataset.type = "off";
+month.innerText = months[i].name;
+month.dataset.max = months[i].max;
+contM.append(month);
+}
+
+const monthArr = document.querySelectorAll(".month");
+
+if(window.localStorage.getItem("daysA01") == null || window.localStorage.getItem("daysA01") == "undefined"){
 abs = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 }
 else{
 abs = window.localStorage.getItem("daysA01");
 }
 
+if(window.localStorage.getItem("monthName01") == null || window.localStorage.getItem("monthName01") == "undefined"){
+date.innerText = "Месяц";
+monthName = "Месяц";
+}
+else{
+date.innerText = window.localStorage.getItem("monthName01");
+monthName = window.localStorage.getItem("monthName01");
+}
+
 for(let i = 0; i < 31; i++){
+if(count < 32){
+count = count + 1;
+}
 let day = document.createElement("div");
 day.className = "day";
 day.dataset.type = abs[i];
+day.innerText = count;
 document.querySelector(".container").append(day);
 }
 
@@ -62,16 +148,31 @@ else{
 event.target.dataset.type = "a";
 }
 }
+else if(event.target.className === "month"){
+if(event.target.dataset.type === "off"){
+for(let i = 0; i < 12; i++){
+monthArr[i].dataset.type = "off";
+}
+event.target.dataset.type = "on";
+monthName = `${event.target.innerText} (${event.target.dataset.max} дня)`;
+date.innerText = monthName;
+}
+else if(event.target.dataset.type === "on"){
+event.target.dataset.type = "off";
+}
+}
 }
 
 window.onbeforeunload = function(){
-for(let i = 0; i < 31; i++){
-abs = "";
 let code = document.querySelector(".code");
+abs = "";
+for(let i = 0; i < 31; i++){
 code.append(document.querySelectorAll(".day")[i].dataset.type);
+}
 window.localStorage.setItem("daysA01", code.innerText);
+window.localStorage.setItem("monthName01", monthName);
 }
-}
+
 
 </script>
 </body>
